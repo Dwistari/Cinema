@@ -44,7 +44,6 @@ class ViewController: UIViewController {
     
     private func setupView() {
         view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -58,7 +57,6 @@ class ViewController: UIViewController {
         
     }
     
-
 
 }
 
@@ -74,9 +72,12 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
           return cell
       }
       
-      func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-          print("Selected Movie: \(movies[indexPath.row])")
-          tableView.deselectRow(at: indexPath, animated: true)
-      }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("Selected Movie: \(movies[indexPath.row])")
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let vc = DetailViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
     
 }
