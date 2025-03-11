@@ -10,12 +10,11 @@
 		DD34F2EC2D80328D00DDFFF1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34F2EB2D80328D00DDFFF1 /* AppDelegate.swift */; };
 		DD34F2EE2D80328D00DDFFF1 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34F2ED2D80328D00DDFFF1 /* SceneDelegate.swift */; };
 		DD34F2F02D80328D00DDFFF1 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34F2EF2D80328D00DDFFF1 /* ViewController.swift */; };
-		DD34F2F32D80328D00DDFFF1 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = DD34F2F22D80328D00DDFFF1 /* Base */; };
-		DD34F2F52D80328E00DDFFF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DD34F2F42D80328E00DDFFF1 /* Assets.xcassets */; };
 		DD34F2F82D80328E00DDFFF1 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = DD34F2F72D80328E00DDFFF1 /* Base */; };
 		DD34F3032D80328F00DDFFF1 /* CinemaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34F3022D80328F00DDFFF1 /* CinemaTests.swift */; };
 		DD34F30D2D80328F00DDFFF1 /* CinemaUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34F30C2D80328F00DDFFF1 /* CinemaUITests.swift */; };
 		DD34F30F2D80328F00DDFFF1 /* CinemaUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34F30E2D80328F00DDFFF1 /* CinemaUITestsLaunchTests.swift */; };
+		DDCBDDC92D805379007E5D92 /* MovieListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDCBDDC82D805379007E5D92 /* MovieListTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,8 +39,6 @@
 		DD34F2EB2D80328D00DDFFF1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DD34F2ED2D80328D00DDFFF1 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		DD34F2EF2D80328D00DDFFF1 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		DD34F2F22D80328D00DDFFF1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		DD34F2F42D80328E00DDFFF1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DD34F2F72D80328E00DDFFF1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DD34F2F92D80328E00DDFFF1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DD34F2FE2D80328F00DDFFF1 /* CinemaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CinemaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -49,6 +46,7 @@
 		DD34F3082D80328F00DDFFF1 /* CinemaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CinemaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DD34F30C2D80328F00DDFFF1 /* CinemaUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinemaUITests.swift; sourceTree = "<group>"; };
 		DD34F30E2D80328F00DDFFF1 /* CinemaUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CinemaUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		DDCBDDC82D805379007E5D92 /* MovieListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieListTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,11 +97,12 @@
 		DD34F2EA2D80328D00DDFFF1 /* Cinema */ = {
 			isa = PBXGroup;
 			children = (
+				DDCBDDC72D804A66007E5D92 /* Views */,
+				DDCBDDC62D804A45007E5D92 /* Controllers */,
+				DDCBDDC52D804A3F007E5D92 /* ViewModels */,
+				DDCBDDC42D804A39007E5D92 /* Models */,
 				DD34F2EB2D80328D00DDFFF1 /* AppDelegate.swift */,
 				DD34F2ED2D80328D00DDFFF1 /* SceneDelegate.swift */,
-				DD34F2EF2D80328D00DDFFF1 /* ViewController.swift */,
-				DD34F2F12D80328D00DDFFF1 /* Main.storyboard */,
-				DD34F2F42D80328E00DDFFF1 /* Assets.xcassets */,
 				DD34F2F62D80328E00DDFFF1 /* LaunchScreen.storyboard */,
 				DD34F2F92D80328E00DDFFF1 /* Info.plist */,
 			);
@@ -125,6 +124,36 @@
 				DD34F30E2D80328F00DDFFF1 /* CinemaUITestsLaunchTests.swift */,
 			);
 			path = CinemaUITests;
+			sourceTree = "<group>";
+		};
+		DDCBDDC42D804A39007E5D92 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		DDCBDDC52D804A3F007E5D92 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		DDCBDDC62D804A45007E5D92 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				DD34F2EF2D80328D00DDFFF1 /* ViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		DDCBDDC72D804A66007E5D92 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				DDCBDDC82D805379007E5D92 /* MovieListTableViewCell.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -215,6 +244,10 @@
 				Base,
 			);
 			mainGroup = DD34F2DF2D80328D00DDFFF1;
+			packageReferences = (
+				DD34F31B2D8038FA00DDFFF1 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				DD34F31C2D8039D800DDFFF1 /* XCRemoteSwiftPackageReference "Moya" */,
+			);
 			productRefGroup = DD34F2E92D80328D00DDFFF1 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -231,9 +264,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DD34F2F52D80328E00DDFFF1 /* Assets.xcassets in Resources */,
 				DD34F2F82D80328E00DDFFF1 /* Base in Resources */,
-				DD34F2F32D80328D00DDFFF1 /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,6 +291,7 @@
 			files = (
 				DD34F2F02D80328D00DDFFF1 /* ViewController.swift in Sources */,
 				DD34F2EC2D80328D00DDFFF1 /* AppDelegate.swift in Sources */,
+				DDCBDDC92D805379007E5D92 /* MovieListTableViewCell.swift in Sources */,
 				DD34F2EE2D80328D00DDFFF1 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -297,14 +329,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		DD34F2F12D80328D00DDFFF1 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				DD34F2F22D80328D00DDFFF1 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		DD34F2F62D80328E00DDFFF1 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -368,7 +392,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -425,7 +449,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -447,7 +471,7 @@
 				INFOPLIST_FILE = Cinema/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIMainStoryboardFile = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -475,7 +499,7 @@
 				INFOPLIST_FILE = Cinema/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UIMainStoryboardFile = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -607,6 +631,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DD34F31B2D8038FA00DDFFF1 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+		DD34F31C2D8039D800DDFFF1 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = DD34F2E02D80328D00DDFFF1 /* Project object */;
 }
