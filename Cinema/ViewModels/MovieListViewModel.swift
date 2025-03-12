@@ -15,38 +15,45 @@ class MovieListViewModel: ObservableObject {
     private let apiService = APIService.shared
     
     let movies = BehaviorRelay<[Movie]>(value: [])
-    var getMovieData : (() -> Void)?
     let errorMessage = PublishSubject<String>()
-    var page = 1
+    var currentPage = 1
     
-    func loadMovies(page: Int) {
-        let lastPage = getLastOpenedPage()
-        let startPage = lastPage > 0 ? lastPage : 1
-        
-        if startPage == 1, isMovieListlCached() {
-            let movies = getCachedMovieList()
-            self.movies.accept(movies)
-        } else {
-            apiService.fetchMovies(page: startPage)
-                  .observe(on: MainScheduler.instance)
-                  .subscribe(onSuccess: { [weak self] movies in
-                      
-                      print("fetch moview")
-                      
-                      guard let self = self else { return }
-                      if page > 1 {
-                          let updatedMovies = (startPage > 1) ? (self.movies.value + movies) : movies
-                          self.movies.accept(updatedMovies)
-                          self.saveMovieList(updatedMovies, page: startPage)
-                      } else {
-                          self.movies.accept(movies)
-                          self.saveMovieList(movies, page: startPage)
-                      }
-                  }, onFailure: { [weak self] error in
-                      self?.errorMessage.onNext(error.localizedDescription)
-                  })
-                  .disposed(by: disposeBag)
-        }
+    func loadMovies() {
+        CoreDataManager.shared.fetchMovies()
+            .subscribe(onNext: { [weak self] cachedMovies in
+                guard let self = self else { return }
+                if cachedMovies.isEmpty {
+                    self.fetchMoviesFromAPI()
+                } else {
+                    currentPage =  UserDefaults.standard.integer(forKey: "currentPage")
+                    if self.currentPage > 1 {
+                        let currentMovies = self.movies.value
+                        self.movies.accept(currentMovies + cachedMovies)
+                    } else {
+                        self.movies.accept(cachedMovies)
+                    }
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    func fetchMoviesFromAPI() {
+        apiService.fetchMovies(page: currentPage)
+              .observe(on: MainScheduler.instance)
+              .subscribe(onSuccess: { [weak self] movies in
+                  guard let self = self else { return }
+                  if currentPage > 1 {
+                      let updatedMovies = self.movies.value + movies
+                      self.movies.accept(updatedMovies)
+                      self.saveMoviesToCoreData(updatedMovies, currentPage: currentPage)
+                  } else {
+                      self.movies.accept(movies)
+                      self.saveMoviesToCoreData(movies, currentPage: currentPage)
+                  }
+              }, onFailure: { [weak self] error in
+                  self?.errorMessage.onNext(error.localizedDescription)
+              })
+              .disposed(by: disposeBag)
     }
     
     func searchMovies(keyword: String, page: Int) {
@@ -61,31 +68,23 @@ class MovieListViewModel: ObservableObject {
     }
     
     func refreshMovies() {
-         movies.accept([])
-         loadMovies(page: 1)
+        movies.accept([])
+        currentPage = 0
+        fetchMoviesFromAPI()
      }
     
-    func saveMovieList(_ movies: [Movie], page: Int) {
-        if let encoded = try? JSONEncoder().encode(movies) {
-            UserDefaults.standard.set(encoded, forKey: "cachedMovies")
-            UserDefaults.standard.set(page, forKey: "lastOpenedPage")
-        }
-    }
+    func loadMoreMovies() {
+         currentPage += 1
+         UserDefaults.standard.set(currentPage, forKey: "currentPage")
+         fetchMoviesFromAPI()
+     }
     
-    func getCachedMovieList() -> [Movie] {
-        if let savedData = UserDefaults.standard.data(forKey: "cachedMovies"),
-           let decoded = try? JSONDecoder().decode([Movie].self, from: savedData) {
-            return decoded
-        }
-        return []
-    }
-    
-    func isMovieListlCached() -> Bool {
-        let details = getCachedMovieList()
-        return !details.isEmpty
-    }
-    
-    func getLastOpenedPage() -> Int {
-        return UserDefaults.standard.integer(forKey: "lastOpenedPage")
+    private func saveMoviesToCoreData(_ movies: [Movie], currentPage: Int) {
+        CoreDataManager.shared.saveMovies(movies, currentPage: currentPage)
+            .subscribe(
+                onCompleted: { print("Movies saved to Core Data") },
+                onError: { error in print("Failed to save movies: \(error)") }
+            )
+            .disposed(by: disposeBag)
     }
 }

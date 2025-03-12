@@ -204,7 +204,7 @@ class MovieListTableViewCell: UITableViewCell {
     
     func bindData(data: Movie?) {
         guard let movie = data else {return}
-        movieName.text = movie.title
+        movieName.text = movie.originalTitle
         descLbl.text = movie.overview
         totalRating.text = String(format: "%.1f", data?.voteAverage ?? 0)
         setupRatingView(rating: movie.voteAverage)

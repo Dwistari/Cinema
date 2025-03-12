@@ -135,11 +135,10 @@ class ViewController: UIViewController {
             .filter { $0 }
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
-                self.currentPage += 1
-                self.viewModel.loadMovies(page: currentPage)
+                self.viewModel.loadMoreMovies()
             })
             .disposed(by: disposeBag)
-        self.viewModel.loadMovies(page: currentPage)
+        self.viewModel.loadMovies()
     }
     
     
