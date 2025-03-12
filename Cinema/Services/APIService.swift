@@ -78,8 +78,6 @@ class APIService {
                 do {
                     let decodedResponse = try JSONDecoder().decode(MovieListResponse.self, from: response.data)
                     return decodedResponse.results
-                } catch {
-                    throw error
                 }
             }
     }

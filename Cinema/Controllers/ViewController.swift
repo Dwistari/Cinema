@@ -9,6 +9,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import SkeletonView
+import Toast
 
 class ViewController: UIViewController {
     
@@ -115,9 +116,7 @@ class ViewController: UIViewController {
         
         viewModel.errorMessage
             .subscribe(onNext: { error in
-                print("Error:", error)
-                print("loadMoviesList-error")
-                
+                self.view.makeToast(error, duration: 3.0, position: .bottom)
             })
             .disposed(by: disposeBag)
         
@@ -164,7 +163,6 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             cell.bindData(data: movies?[indexPath.row])
             return cell
         } else {
-            print("loading showsssss")
             let cell = tableView.dequeueReusableCell(withIdentifier: "LoadingCell", for: indexPath) as! LoadingCell
             cell.startAnimating()
             return cell
@@ -199,6 +197,10 @@ extension ViewController: UISearchBarDelegate {
             viewModel.searchMovies(keyword: searchText, page: 1)
         }
         tableView.reloadData()
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
     }
     
 }

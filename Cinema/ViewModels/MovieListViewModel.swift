@@ -16,8 +16,8 @@ class MovieListViewModel: ObservableObject {
     
     let movies = BehaviorRelay<[Movie]>(value: [])
     let errorMessage = PublishSubject<String>()
-    var currentPage = 1
-    
+    let currentPage = BehaviorRelay<Int>(value: 1)
+
     func loadMovies() {
         CoreDataManager.shared.fetchMovies()
             .subscribe(onNext: { [weak self] cachedMovies in
@@ -25,10 +25,10 @@ class MovieListViewModel: ObservableObject {
                 if cachedMovies.isEmpty {
                     self.fetchMoviesFromAPI()
                 } else {
-                    currentPage =  UserDefaults.standard.integer(forKey: "currentPage")
-                    if self.currentPage > 1 {
+                    let currentPage = self.currentPage.value
+                    if currentPage > 1 {
                         let currentMovies = self.movies.value
-                        self.movies.accept(currentMovies + cachedMovies)
+                        self.movies.accept(cachedMovies + currentMovies)
                     } else {
                         self.movies.accept(cachedMovies)
                     }
@@ -38,6 +38,7 @@ class MovieListViewModel: ObservableObject {
     }
     
     func fetchMoviesFromAPI() {
+        let currentPage = self.currentPage.value
         apiService.fetchMovies(page: currentPage)
               .observe(on: MainScheduler.instance)
               .subscribe(onSuccess: { [weak self] movies in
@@ -68,14 +69,15 @@ class MovieListViewModel: ObservableObject {
     }
     
     func refreshMovies() {
-        movies.accept([])
-        currentPage = 0
-        fetchMoviesFromAPI()
+         movies.accept([])
+         currentPage.accept(1)
+         fetchMoviesFromAPI()
      }
     
     func loadMoreMovies() {
-         currentPage += 1
-         UserDefaults.standard.set(currentPage, forKey: "currentPage")
+         let nextPage = currentPage.value + 1
+         currentPage.accept(nextPage)
+         UserDefaults.standard.set(nextPage, forKey: "currentPage")
          fetchMoviesFromAPI()
      }
     

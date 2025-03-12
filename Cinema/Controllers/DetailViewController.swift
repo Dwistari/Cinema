@@ -8,6 +8,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Toast
 
 class DetailViewController: UIViewController {
     
@@ -265,7 +266,7 @@ class DetailViewController: UIViewController {
         
         viewModel.errorMessage
             .subscribe(onNext: { error in
-                print("Error:", error)
+                self.view.makeToast(error, duration: 3.0, position: .bottom)
             })
             .disposed(by: disposeBag)
 
