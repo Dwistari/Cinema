@@ -20,7 +20,7 @@ extension MovieAPI: TargetType {
     var baseURL: URL {
         return URL(string: UrlConstants.baseURL)!
     }
-
+    
     var path: String {
         switch self {
         case .getPopularMovies:
@@ -31,37 +31,37 @@ extension MovieAPI: TargetType {
             return "/search/movie"
         }
     }
-
+    
     var method: Moya.Method {
         return .get
     }
-
+    
     var task: Task {
         switch self {
-          case .getPopularMovies(let page):
-              return .requestParameters(
-                  parameters: [ "page": page],
-                  encoding: URLEncoding.default
-              )
-              
-          case .searchMovies(let query, let page):
-              return .requestParameters(
-                  parameters: ["query": query,"page": page],
-                  encoding: URLEncoding.default
-              )
+        case .getPopularMovies(let page):
+            return .requestParameters(
+                parameters: [ "page": page],
+                encoding: URLEncoding.default
+            )
+            
+        case .searchMovies(let query, let page):
+            return .requestParameters(
+                parameters: ["query": query,"page": page],
+                encoding: URLEncoding.default
+            )
             
         case .getMovieDetail:
             return .requestPlain
         }
     }
-
+    
     var headers: [String: String]? {
         return [
             "Authorization": "Bearer \(UrlConstants.bearerToken)",
             "Accept": "application/json"
         ]
     }
-
+    
     var validationType: ValidationType {
         return .successCodes
     }
@@ -70,7 +70,7 @@ extension MovieAPI: TargetType {
 class APIService {
     static let shared = APIService()
     private let provider = MoyaProvider<MovieAPI>()
-
+    
     func fetchMovies(page: Int)  -> Single<[Movie]> {
         
         return provider.rx.request(.getPopularMovies(page: page))
@@ -96,21 +96,17 @@ class APIService {
             }
     }
     
-    func getDetailMovie(id: Int, completion: @escaping (Result<MovieDetails, Error>) -> Void) {
-        provider.request(.getMovieDetail(id: id)) { result in
-            switch result {
-            case .success(let response):
+    func getDetailMovie(id: Int) -> Single<MovieDetails> {
+        return provider.rx.request(.getMovieDetail(id: id))
+            .map {  response in
                 do {
                     let decodedResponse = try JSONDecoder().decode(MovieDetails.self, from: response.data)
-                    print("getDetailMovie", decodedResponse)
-                    completion(.success(decodedResponse))
+                    return decodedResponse
                 } catch {
-                    completion(.failure(error))
+                    throw error
                 }
-            case .failure(let error):
-                completion(.failure(error))
+                
             }
-        }
     }
 }
 

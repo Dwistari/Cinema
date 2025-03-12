@@ -6,26 +6,26 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
 class MovieDetailsViewModel: ObservableObject {
- 
-    @Published var movies: MovieDetails?
-    var getDetailsMovie : (() -> Void)?
+    
+    var movies = BehaviorRelay<MovieDetails?>(value: nil)
+    private let disposeBag = DisposeBag()
+    private let apiService = APIService.shared
+    
+    let errorMessage = PublishSubject<String>()
     
     func loadDetailsMovie(id: Int) {
-        print("MovieDetailsViewModel", id)
-        APIService.shared.getDetailMovie(id: id) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let movies):
-                    self?.movies = movies
-                    self?.getDetailsMovie?()
-                    print("getDetailsMovie \(movies)")
-
-                case .failure(let error):
-                    print("Error fetching movies: \(error.localizedDescription)")
-                }
-            }
-        }
+        apiService.getDetailMovie(id: id)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onSuccess: { [weak self] movies in
+                guard let self = self else { return }
+                self.movies.accept(movies)
+            }, onFailure: { [weak self] error in
+                self?.errorMessage.onNext(error.localizedDescription)
+            })
+            .disposed(by: disposeBag)
     }
 }

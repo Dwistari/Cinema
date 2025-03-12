@@ -6,7 +6,8 @@
 //
 
 import UIKit
-
+import RxSwift
+import RxCocoa
 
 class DetailViewController: UIViewController {
     
@@ -15,6 +16,7 @@ class DetailViewController: UIViewController {
     lazy var containerView: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
+        view.isSkeletonable = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -22,6 +24,7 @@ class DetailViewController: UIViewController {
     lazy var rateContainer: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
+        view.isSkeletonable = true
         view.layer.cornerRadius = 25
         view.backgroundColor = UIColor.orange
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -30,7 +33,7 @@ class DetailViewController: UIViewController {
     
     lazy var rateLbl: UILabel = {
         let view = UILabel()
-        view.text = "8/10"
+        view.isSkeletonable = true
         view.textColor = UIColor.white
         view.font = UIFont.boldSystemFont(ofSize: 16)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -42,6 +45,7 @@ class DetailViewController: UIViewController {
         view.backgroundColor = UIColor.gray
         view.contentMode = .scaleToFill
         view.layer.masksToBounds = true
+        view.isSkeletonable = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -52,6 +56,7 @@ class DetailViewController: UIViewController {
         view.backgroundColor = UIColor.gray
         view.contentMode = .scaleToFill
         view.layer.masksToBounds = true
+        view.isSkeletonable = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -60,6 +65,7 @@ class DetailViewController: UIViewController {
         let view = UILabel()
         view.text = "Movie name"
         view.numberOfLines = 2
+        view.isSkeletonable = true
         view.textColor = UIColor.black
         view.font = UIFont.boldSystemFont(ofSize: 20)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -69,6 +75,7 @@ class DetailViewController: UIViewController {
     lazy var taglineLbl: UILabel = {
         let view = UILabel()
         view.numberOfLines = 2
+        view.isSkeletonable = true
         view.textColor = UIColor.gray
         view.font = UIFont.systemFont(ofSize: 12)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -78,6 +85,7 @@ class DetailViewController: UIViewController {
     lazy var totalRating: UILabel = {
         let view = UILabel()
         view.numberOfLines = 2
+        view.isSkeletonable = true
         view.textColor = UIColor.black
         view.font = UIFont.systemFont(ofSize: 12)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -87,6 +95,7 @@ class DetailViewController: UIViewController {
     lazy var realeselbl: UILabel = {
         let view = UILabel()
         view.numberOfLines = 2
+        view.isSkeletonable = true
         view.textColor = UIColor.gray
         view.font = UIFont.systemFont(ofSize: 12)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -97,6 +106,7 @@ class DetailViewController: UIViewController {
         let view = UILabel()
         view.numberOfLines = 2
         view.textColor = UIColor.gray
+        view.isSkeletonable = true
         view.font = UIFont.systemFont(ofSize: 12)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -106,6 +116,7 @@ class DetailViewController: UIViewController {
         let view = UILabel()
         view.numberOfLines = 2
         view.text = "Synopsis"
+        view.isSkeletonable = true
         view.textColor = UIColor.black
         view.font = UIFont.boldSystemFont(ofSize: 20)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -115,7 +126,8 @@ class DetailViewController: UIViewController {
     lazy var synopsisDesc: UILabel = {
         let view = UILabel()
         view.numberOfLines = 0
-        view.text = "SynopsisSynopsisSynopsisSynopsisSynopsisSynopsisSynopsisSynopsisSynopsisSynopsisSynopsisSynopsis"
+        view.text = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
+        view.isSkeletonable = true
         view.textColor = UIColor.gray
         view.font = UIFont.systemFont(ofSize: 12)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -126,26 +138,25 @@ class DetailViewController: UIViewController {
         let button = UIButton()
         button.setTitle("OPEN IMDB", for: .normal)
         button.addTarget(self, action: #selector(openBtn), for: .touchUpInside)
-        button.setTitleColor(UIColor.black, for: .normal)
+        button.setTitleColor(UIColor.gray, for: .normal)
         button.layer.borderWidth = 1
-        button.layer.borderColor = UIColor.black.cgColor
+        button.isSkeletonable = true
+        button.layer.borderColor = UIColor.gray.cgColor
         button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
+
     
-    lazy var viewModel: MovieDetailsViewModel = {
-        let viewModel = MovieDetailsViewModel()
-        viewModel.getDetailsMovie = fetchDetailsMovie
-        return viewModel
-    }()
-    
+    private let viewModel = MovieDetailsViewModel()
+    private let disposeBag = DisposeBag()
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupView()
-        viewModel.loadDetailsMovie(id: movie?.id ?? 0)
+        loadDetail()
     }
     
     
@@ -200,7 +211,7 @@ class DetailViewController: UIViewController {
         NSLayoutConstraint.activate([
             taglineLbl.topAnchor.constraint(equalTo: movieName.bottomAnchor, constant: 8),
             taglineLbl.leadingAnchor.constraint(equalTo: movieImgView.trailingAnchor, constant: 16),
-            taglineLbl.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 16),
+            taglineLbl.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
         ])
 
         
@@ -241,11 +252,32 @@ class DetailViewController: UIViewController {
         
     }
     
-    private func fetchDetailsMovie() {
+    private func loadDetail() {
+        showLoading()
+        viewModel.movies
+            .compactMap { $0 }
+                .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { movies in
+                self.hideLoading()
+                self.fetchDetailsMovie(detail: movies)
+            })
+            .disposed(by: disposeBag)
+        
+        viewModel.errorMessage
+            .subscribe(onNext: { error in
+                print("Error:", error)
+            })
+            .disposed(by: disposeBag)
+
+        viewModel.loadDetailsMovie(id: movie?.id ?? 0)
+
+    }
+    
+    private func fetchDetailsMovie(detail: MovieDetails?) {
         DispatchQueue.main.async {
-            guard let data = self.viewModel.movies else {return}
+            guard let data = detail else {return}
+                    
             let genreNames = data.genres.map { $0.name }.joined(separator: ", ")
-            
             self.movieName.text = data.originalTitle
             self.taglineLbl.text = data.tagline
             self.realeselbl.text = "Realease time: \(data.releaseDate)"
@@ -254,6 +286,46 @@ class DetailViewController: UIViewController {
             self.rateLbl.text = String(format: "%.1f", data.voteAverage)
             self.coverImgView.sd_setImage(with: URL(string: UrlConstants.urlImage + (data.backdropPath ?? "")), placeholderImage: UIImage(named: "placeholder"))
             self.movieImgView.sd_setImage(with: URL(string: UrlConstants.urlImage + (data.posterPath ?? "")), placeholderImage: UIImage(named: "placeholder"))
+        }
+    }
+    
+    private func showLoading() {
+        DispatchQueue.main.async {
+            self.coverImgView.showAnimatedSkeleton()
+            self.movieImgView.showAnimatedSkeleton()
+            self.movieName.showAnimatedSkeleton()
+            self.synopsisDesc.showAnimatedSkeleton()
+            self.taglineLbl.showAnimatedSkeleton()
+            self.openIMBtn.showAnimatedSkeleton()
+            self.rateContainer.showAnimatedSkeleton()
+            self.realeselbl.showAnimatedSkeleton()
+            self.genreLbl.showAnimatedSkeleton()
+        }
+    }
+    
+    private func hideLoading() {
+        DispatchQueue.main.async {
+            self.coverImgView.hideSkeleton()
+            self.movieImgView.hideSkeleton()
+            self.movieName.hideSkeleton()
+            self.synopsisDesc.hideSkeleton()
+            self.taglineLbl.hideSkeleton()
+            self.openIMBtn.hideSkeleton()
+            self.rateContainer.hideSkeleton()
+            self.realeselbl.hideSkeleton()
+            self.genreLbl.hideSkeleton()
+                        
+            self.coverImgView.isSkeletonable = false
+            self.movieImgView.isSkeletonable = false
+            self.movieName.isSkeletonable = false
+            self.synopsisDesc.isSkeletonable = false
+            self.taglineLbl.isSkeletonable = false
+            self.openIMBtn.isSkeletonable = false
+            self.rateContainer.isSkeletonable = false
+            self.realeselbl.isSkeletonable = false
+            self.genreLbl.isSkeletonable = false
+            
+            self.view.layoutIfNeeded()
         }
     }
     

@@ -34,7 +34,7 @@ class ViewController: UIViewController {
         view.delegate = self
         view.dataSource = self
         view.separatorStyle = .none
-        view.isSkeletonable = true // Enable skeleton loading
+        view.isSkeletonable = true
         view.showSkeleton()
         view.refreshControl = refreshControl
         view.backgroundColor = UIColor.white
@@ -191,9 +191,7 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
             self.tableView.stopSkeletonAnimation()
             self.tableView.hideSkeleton(reloadDataAfter: true)
         }
-    }
-    
-    
+    }    
 }
 
 extension ViewController: UISearchBarDelegate {
