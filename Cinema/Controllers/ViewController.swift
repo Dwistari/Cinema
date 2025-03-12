@@ -9,7 +9,7 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    let movies = ["Inception", "Interstellar", "The Dark Knight", "Avatar", "Titanic"]
+    var movies: [Movie]?
     
     lazy var tableView: UITableView = {
         let view = UITableView()
@@ -21,12 +21,18 @@ class ViewController: UIViewController {
         return view
     }()
     
+    lazy var viewModel: MovieListViewModel = {
+        let viewModel = MovieListViewModel()
+        viewModel.getMovieData = getMovieList
+        return viewModel
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupNavbar()
         setupView()
+        viewModel.loadMovies()
     }
     
     
@@ -52,6 +58,14 @@ class ViewController: UIViewController {
         ])
     }
     
+    private func getMovieList() {
+        DispatchQueue.main.async {
+            self.movies = self.viewModel.movies
+            self.tableView.reloadData()
+        }
+        
+    }
+    
     
     @objc private func search() {
         
@@ -63,20 +77,19 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
  
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-          return movies.count
+        return movies?.count ?? 0
       }
       
       func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
           let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! MovieListTableViewCell
-          cell.bindData()
+          cell.bindData(data: movies?[indexPath.row])
           return cell
       }
       
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Selected Movie: \(movies[indexPath.row])")
         tableView.deselectRow(at: indexPath, animated: true)
-        
         let vc = DetailViewController()
+        vc.movie = movies?[indexPath.row]
         navigationController?.pushViewController(vc, animated: true)
     }
     

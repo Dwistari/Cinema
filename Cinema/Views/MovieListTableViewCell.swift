@@ -43,6 +43,7 @@ class MovieListTableViewCell: UITableViewCell {
         let view = UILabel()
         view.numberOfLines = 2
         view.textColor = UIColor.black
+        view.font = UIFont.boldSystemFont(ofSize: 20)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -59,7 +60,8 @@ class MovieListTableViewCell: UITableViewCell {
     lazy var totalRating: UILabel = {
         let view = UILabel()
         view.numberOfLines = 2
-        view.textColor = UIColor.black
+        view.textColor = UIColor.yellow
+        view.font = UIFont.systemFont(ofSize: 16)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -68,6 +70,7 @@ class MovieListTableViewCell: UITableViewCell {
         let view = UILabel()
         view.numberOfLines = 2
         view.textColor = UIColor.black
+        view.font = UIFont.systemFont(ofSize: 12)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -128,7 +131,7 @@ class MovieListTableViewCell: UITableViewCell {
         
         contentContainer.addSubview(totalRating)
         NSLayoutConstraint.activate([
-            totalRating.topAnchor.constraint(equalTo: movieName.bottomAnchor, constant: 4),
+            totalRating.topAnchor.constraint(equalTo: movieName.bottomAnchor, constant: 12),
             totalRating.leadingAnchor.constraint(equalTo: ratingStackView.trailingAnchor, constant: 12),
             totalRating.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -12),
         ])
@@ -149,7 +152,7 @@ class MovieListTableViewCell: UITableViewCell {
     private func setupRatingView(rating: Double) {
         ratingStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
        
-        let fullStars = Int(rating) // Integer part (e.g., 4 for 4.5)
+        let fullStars = Int(rating/2)
         let hasHalfStar = (rating - Double(fullStars)) >= 0.5
         
         for _ in 0..<fullStars {
@@ -179,11 +182,12 @@ class MovieListTableViewCell: UITableViewCell {
         }
     }
     
-    func bindData() {
-        movieName.text = "COCO"
-        descLbl.text = "loremdibsuaskdnsddahsdhashdjash"
-        totalRating.text = "8/10"
-        setupRatingView(rating: 4.5)
+    func bindData(data: Movie?) {
+        guard let movie = data else {return}
+        movieName.text = movie.title
+        descLbl.text = movie.overview
+        totalRating.text = String(format: "%.1f", data?.voteAverage ?? 0)
+        setupRatingView(rating: movie.voteAverage)
+        movieImgView.loadImage(from: UrlConstants.urlImage + (movie.posterPath ?? ""))
     }
-    
 }

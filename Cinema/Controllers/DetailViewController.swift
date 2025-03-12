@@ -10,6 +10,8 @@ import UIKit
 
 class DetailViewController: UIViewController {
     
+    var movie: Movie?
+
     lazy var containerView: UIView = {
         let view = UIView()
         view.layer.masksToBounds = true
@@ -64,6 +66,15 @@ class DetailViewController: UIViewController {
         return view
     }()
     
+    lazy var taglineLbl: UILabel = {
+        let view = UILabel()
+        view.numberOfLines = 2
+        view.textColor = UIColor.gray
+        view.font = UIFont.systemFont(ofSize: 12)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     lazy var totalRating: UILabel = {
         let view = UILabel()
         view.numberOfLines = 2
@@ -73,10 +84,18 @@ class DetailViewController: UIViewController {
         return view
     }()
     
-    lazy var descLbl: UILabel = {
+    lazy var realeselbl: UILabel = {
         let view = UILabel()
         view.numberOfLines = 2
-        view.text = "fcadjfhajfhjadhfhadhfadjfhadfaddafe"
+        view.textColor = UIColor.gray
+        view.font = UIFont.systemFont(ofSize: 12)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    lazy var genreLbl: UILabel = {
+        let view = UILabel()
+        view.numberOfLines = 2
         view.textColor = UIColor.gray
         view.font = UIFont.systemFont(ofSize: 12)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -104,11 +123,19 @@ class DetailViewController: UIViewController {
     }()
     
     
+    lazy var viewModel: MovieDetailsViewModel = {
+        let viewModel = MovieDetailsViewModel()
+        viewModel.getDetailsMovie = fetchDetailsMovie
+        return viewModel
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupView()
+        viewModel.loadDetailsMovie(id: movie?.id ?? 0)
     }
+    
     
     private func setupView() {
         view.addSubview(containerView)
@@ -146,7 +173,7 @@ class DetailViewController: UIViewController {
         NSLayoutConstraint.activate([
             movieImgView.topAnchor.constraint(equalTo: coverImgView.bottomAnchor, constant: -16),
             movieImgView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
-            movieImgView.heightAnchor.constraint(equalToConstant: 120),
+            movieImgView.heightAnchor.constraint(equalToConstant: 150),
             movieImgView.widthAnchor.constraint(equalToConstant: 100),
             
         ])
@@ -158,11 +185,26 @@ class DetailViewController: UIViewController {
             movieName.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ])
         
-        containerView.addSubview(descLbl)
+        containerView.addSubview(taglineLbl)
         NSLayoutConstraint.activate([
-            descLbl.topAnchor.constraint(equalTo: movieName.bottomAnchor, constant: 8),
-            descLbl.leadingAnchor.constraint(equalTo: movieImgView.trailingAnchor, constant: 16),
-            descLbl.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            taglineLbl.topAnchor.constraint(equalTo: movieName.bottomAnchor, constant: 8),
+            taglineLbl.leadingAnchor.constraint(equalTo: movieImgView.trailingAnchor, constant: 16),
+            taglineLbl.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 16),
+        ])
+
+        
+        containerView.addSubview(realeselbl)
+        NSLayoutConstraint.activate([
+            realeselbl.topAnchor.constraint(equalTo: taglineLbl.bottomAnchor, constant: 16),
+            realeselbl.leadingAnchor.constraint(equalTo: movieImgView.trailingAnchor, constant: 16),
+            realeselbl.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 16),
+        ])
+
+        containerView.addSubview(genreLbl)
+        NSLayoutConstraint.activate([
+            genreLbl.topAnchor.constraint(equalTo: realeselbl.bottomAnchor, constant: 8),
+            genreLbl.leadingAnchor.constraint(equalTo: movieImgView.trailingAnchor, constant: 16),
+            genreLbl.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: 16),
         ])
         
         containerView.addSubview(synopsisLbl)
@@ -179,6 +221,23 @@ class DetailViewController: UIViewController {
             synopsisDesc.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
         ])
         
+    }
+    
+    private func fetchDetailsMovie() {
+        DispatchQueue.main.async {
+            guard let data = self.viewModel.movies else {return}
+            let genreNames = data.genres.map { $0.name }.joined(separator: ", ")
+            
+            self.movieName.text = data.originalTitle
+            self.taglineLbl.text = data.tagline
+            self.realeselbl.text = "Realease time: \(data.releaseDate)"
+            self.genreLbl.text = genreNames
+            self.synopsisDesc.text = data.overview
+            self.rateLbl.text = String(format: "%.1f", data.voteAverage)
+            self.coverImgView.loadImage(from: UrlConstants.urlImage + (data.backdropPath ?? ""))
+            self.movieImgView.loadImage(from: UrlConstants.urlImage + (data.posterPath ?? ""))
+
+        }
     }
         
 }
