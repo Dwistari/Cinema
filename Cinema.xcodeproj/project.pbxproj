@@ -17,6 +17,9 @@
 		DD34F3032D80328F00DDFFF1 /* CinemaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34F3022D80328F00DDFFF1 /* CinemaTests.swift */; };
 		DD34F30D2D80328F00DDFFF1 /* CinemaUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34F30C2D80328F00DDFFF1 /* CinemaUITests.swift */; };
 		DD34F30F2D80328F00DDFFF1 /* CinemaUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34F30E2D80328F00DDFFF1 /* CinemaUITestsLaunchTests.swift */; };
+		DD8C5AFA2D81586700B10EA7 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DD8C5AF92D81586700B10EA7 /* RxSwift */; };
+		DD8C5AFD2D815C7700B10EA7 /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = DD8C5AFC2D815C7700B10EA7 /* RxMoya */; };
+		DD8C5AFF2D815D0100B10EA7 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = DD8C5AFE2D815D0100B10EA7 /* RxCocoa */; };
 		DDBF85242D8109C9009254B5 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = DDBF85232D8109C9009254B5 /* Moya */; };
 		DDBF85262D81345E009254B5 /* MovieDetailsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBF85252D81345E009254B5 /* MovieDetailsResponse.swift */; };
 		DDBF85282D81356A009254B5 /* MovieDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DDBF85272D81356A009254B5 /* MovieDetailsViewModel.swift */; };
@@ -71,6 +74,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD8C5AFD2D815C7700B10EA7 /* RxMoya in Frameworks */,
+				DD8C5AFA2D81586700B10EA7 /* RxSwift in Frameworks */,
+				DD8C5AFF2D815D0100B10EA7 /* RxCocoa in Frameworks */,
 				DDBF85242D8109C9009254B5 /* Moya in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -240,6 +246,9 @@
 			name = Cinema;
 			packageProductDependencies = (
 				DDBF85232D8109C9009254B5 /* Moya */,
+				DD8C5AF92D81586700B10EA7 /* RxSwift */,
+				DD8C5AFC2D815C7700B10EA7 /* RxMoya */,
+				DD8C5AFE2D815D0100B10EA7 /* RxCocoa */,
 			);
 			productName = Cinema;
 			productReference = DD34F2E82D80328D00DDFFF1 /* Cinema.app */;
@@ -316,6 +325,7 @@
 			packageReferences = (
 				DD34F31B2D8038FA00DDFFF1 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				DD34F31C2D8039D800DDFFF1 /* XCRemoteSwiftPackageReference "Moya" */,
+				DDBF852F2D8153FF009254B5 /* XCRemoteSwiftPackageReference "RxSwift" */,
 			);
 			productRefGroup = DD34F2E92D80328D00DDFFF1 /* Products */;
 			projectDirPath = "";
@@ -477,6 +487,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -532,6 +543,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -726,9 +738,32 @@
 				minimumVersion = 15.0.3;
 			};
 		};
+		DDBF852F2D8153FF009254B5 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.9.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		DD8C5AF92D81586700B10EA7 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DDBF852F2D8153FF009254B5 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		DD8C5AFC2D815C7700B10EA7 /* RxMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DD34F31C2D8039D800DDFFF1 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = RxMoya;
+		};
+		DD8C5AFE2D815D0100B10EA7 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DDBF852F2D8153FF009254B5 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
 		DDBF85232D8109C9009254B5 /* Moya */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DD34F31C2D8039D800DDFFF1 /* XCRemoteSwiftPackageReference "Moya" */;

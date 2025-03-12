@@ -6,6 +6,8 @@
 //
 
 import Moya
+import RxSwift
+import RxMoya
 import Foundation
 
 enum MovieAPI {
@@ -69,37 +71,29 @@ class APIService {
     static let shared = APIService()
     private let provider = MoyaProvider<MovieAPI>()
 
-    func fetchMovies(page: Int, completion: @escaping (Result<[Movie], Error>) -> Void) {
-        provider.request(.getPopularMovies(page: page)) { result in
-            switch result {
-            case .success(let response):
+    func fetchMovies(page: Int)  -> Single<[Movie]> {
+        
+        return provider.rx.request(.getPopularMovies(page: page))
+            .map { response in
                 do {
                     let decodedResponse = try JSONDecoder().decode(MovieListResponse.self, from: response.data)
-                    completion(.success(decodedResponse.results))
+                    return decodedResponse.results
                 } catch {
-                    completion(.failure(error))
+                    throw error
                 }
-            case .failure(let error):
-                completion(.failure(error))
             }
-        }
     }
     
-    func searchMovies(keyword: String, completion: @escaping (Result<[Movie], Error>) -> Void) {
-        provider.request(.searchMovies(query: keyword, page: 1)) { result in
-            switch result {
-            case .success(let response):
+    func searchMovies(keyword: String, page: Int) -> Single<[Movie]> {
+        return provider.rx.request(.searchMovies(query: keyword, page: page))
+            .map { response in
                 do {
                     let decodedResponse = try JSONDecoder().decode(MovieListResponse.self, from: response.data)
-                    print("hit-search", decodedResponse)
-                    completion(.success(decodedResponse.results))
+                    return decodedResponse.results
                 } catch {
-                    completion(.failure(error))
+                    throw error
                 }
-            case .failure(let error):
-                completion(.failure(error))
             }
-        }
     }
     
     func getDetailMovie(id: Int, completion: @escaping (Result<MovieDetails, Error>) -> Void) {

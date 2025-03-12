@@ -6,40 +6,48 @@
 //
 
 import Foundation
-
+import RxSwift
+import RxCocoa
 
 class MovieListViewModel: ObservableObject {
- 
-    @Published var movies: [Movie] = []
+    
+    private let disposeBag = DisposeBag()
+    private let apiService = APIService.shared
+    
+    let movies = BehaviorRelay<[Movie]>(value: [])
     var getMovieData : (() -> Void)?
+    let errorMessage = PublishSubject<String>()
+    var page = 1
     
-    func loadMovies() {
-        APIService.shared.fetchMovies(page: 1) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let movies):
-                    self?.movies = movies
-                    self?.getMovieData?()
-                case .failure(let error):
-                    print("Error fetching movies: \(error.localizedDescription)")
-                }
-            }
-        }
+    func loadMovies(page: Int) {
+        apiService.fetchMovies(page: page)
+              .observe(on: MainScheduler.instance)
+              .subscribe(onSuccess: { [weak self] movies in
+                  guard let self = self else { return }
+                  if page > 1 {
+                      self.movies.accept(self.movies.value + movies)
+                  } else {
+                      self.movies.accept(movies)
+                  }
+              }, onFailure: { [weak self] error in
+                  self?.errorMessage.onNext(error.localizedDescription)
+              })
+              .disposed(by: disposeBag)
     }
     
-    func searchMovies(keyword: String) {
-        APIService.shared.searchMovies(keyword: keyword) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success(let movies):
-                    self?.movies = movies
-                    self?.getMovieData?()
-                    print("searchMovies \(movies)")
-
-                case .failure(let error):
-                    print("Error fetching movies: \(error.localizedDescription)")
-                }
-            }
-        }
+    func searchMovies(keyword: String, page: Int) {
+        apiService.searchMovies(keyword: keyword, page: page)
+            .subscribe(on: MainScheduler.instance)
+            .subscribe(onSuccess: { [weak self] movies in
+                self?.movies.accept(movies)
+            }, onFailure: { [weak self] error in
+                self?.errorMessage.onNext(error.localizedDescription)
+            })
+            .disposed(by: disposeBag)
     }
+    
+    func loadMoreMovies() {
+           let nextPage = page + 1
+           loadMovies(page: nextPage)
+       }
 }

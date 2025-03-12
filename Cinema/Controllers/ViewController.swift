@@ -6,10 +6,13 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class ViewController: UIViewController {
     
     var movies: [Movie]?
+    var currentPage = 1
     
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -32,17 +35,14 @@ class ViewController: UIViewController {
         return view
     }()
     
-    lazy var viewModel: MovieListViewModel = {
-        let viewModel = MovieListViewModel()
-        viewModel.getMovieData = getMovieList
-        return viewModel
-    }()
+    private let viewModel = MovieListViewModel()
+    private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupView()
-        viewModel.loadMovies()
+        loadMoviesList()
     }
     
     private func setupView() {
@@ -63,12 +63,39 @@ class ViewController: UIViewController {
         ])
     }
     
-    private func getMovieList() {
-        DispatchQueue.main.async {
-            self.movies = self.viewModel.movies
-            self.tableView.reloadData()
-        }
+    private func loadMoviesList() {
+        viewModel.movies
+            .subscribe(onNext: { movies in
+                self.movies = movies
+                self.tableView.reloadData()
+            })
+            .disposed(by: disposeBag)
         
+        viewModel.errorMessage
+            .subscribe(onNext: { error in
+                print("Error:", error)
+            })
+            .disposed(by: disposeBag)
+        
+        tableView.rx.contentOffset
+            .map { [weak self] contentOffset in
+                guard let self = self else { return false }
+                
+                let offsetY = contentOffset.y
+                let contentHeight = self.tableView.contentSize.height
+                let tableViewHeight = self.tableView.frame.size.height
+                
+                return offsetY > contentHeight - tableViewHeight - 100
+            }
+            .distinctUntilChanged()
+            .filter { $0 }
+            .subscribe(onNext: { [weak self] _ in
+                guard let self = self else { return }
+                self.currentPage += 1
+                self.viewModel.loadMovies(page: currentPage)
+            })
+            .disposed(by: disposeBag)
+            self.viewModel.loadMovies(page: currentPage)
     }
 
 }
@@ -98,7 +125,7 @@ extension ViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
          if !searchText.isEmpty {
-             viewModel.searchMovies(keyword: searchText)
+             viewModel.searchMovies(keyword: searchText, page: 1)
          }
          tableView.reloadData()
      }
