@@ -9,7 +9,8 @@ import Moya
 import Foundation
 
 enum MovieAPI {
-    case getMovies(page: Int)
+    case getPopularMovies(page: Int)
+    case searchMovies(query: String, page: Int)
     case getMovieDetail(id: Int)
 }
 
@@ -20,10 +21,12 @@ extension MovieAPI: TargetType {
 
     var path: String {
         switch self {
-        case .getMovies:
+        case .getPopularMovies:
             return "/movie/popular"
         case .getMovieDetail(let id):
             return "/movie/\(id)"
+        case .searchMovies:
+            return "/search/movie"
         }
     }
 
@@ -32,10 +35,22 @@ extension MovieAPI: TargetType {
     }
 
     var task: Task {
-        let apiKey = UrlConstants.apiKey
-        let params: [String: Any] = ["api_key": apiKey, "language": "en-US"]
-        
-        return .requestParameters(parameters: params, encoding: URLEncoding.default)
+        switch self {
+          case .getPopularMovies(let page):
+              return .requestParameters(
+                  parameters: [ "page": page],
+                  encoding: URLEncoding.default
+              )
+              
+          case .searchMovies(let query, let page):
+              return .requestParameters(
+                  parameters: ["query": query,"page": page],
+                  encoding: URLEncoding.default
+              )
+            
+        case .getMovieDetail:
+            return .requestPlain
+        }
     }
 
     var headers: [String: String]? {
@@ -55,11 +70,28 @@ class APIService {
     private let provider = MoyaProvider<MovieAPI>()
 
     func fetchMovies(page: Int, completion: @escaping (Result<[Movie], Error>) -> Void) {
-        provider.request(.getMovies(page: page)) { result in
+        provider.request(.getPopularMovies(page: page)) { result in
             switch result {
             case .success(let response):
                 do {
                     let decodedResponse = try JSONDecoder().decode(MovieListResponse.self, from: response.data)
+                    completion(.success(decodedResponse.results))
+                } catch {
+                    completion(.failure(error))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    
+    func searchMovies(keyword: String, completion: @escaping (Result<[Movie], Error>) -> Void) {
+        provider.request(.searchMovies(query: keyword, page: 1)) { result in
+            switch result {
+            case .success(let response):
+                do {
+                    let decodedResponse = try JSONDecoder().decode(MovieListResponse.self, from: response.data)
+                    print("hit-search", decodedResponse)
                     completion(.success(decodedResponse.results))
                 } catch {
                     completion(.failure(error))

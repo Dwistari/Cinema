@@ -20,7 +20,21 @@ class MovieListViewModel: ObservableObject {
                 case .success(let movies):
                     self?.movies = movies
                     self?.getMovieData?()
-                    print("loadMovies \(movies)")
+                case .failure(let error):
+                    print("Error fetching movies: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
+    
+    func searchMovies(keyword: String) {
+        APIService.shared.searchMovies(keyword: keyword) { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let movies):
+                    self?.movies = movies
+                    self?.getMovieData?()
+                    print("searchMovies \(movies)")
 
                 case .failure(let error):
                     print("Error fetching movies: \(error.localizedDescription)")

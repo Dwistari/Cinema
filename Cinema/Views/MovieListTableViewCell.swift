@@ -60,7 +60,7 @@ class MovieListTableViewCell: UITableViewCell {
     lazy var totalRating: UILabel = {
         let view = UILabel()
         view.numberOfLines = 2
-        view.textColor = UIColor.yellow
+        view.textColor = UIColor.orange
         view.font = UIFont.systemFont(ofSize: 16)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -103,7 +103,7 @@ class MovieListTableViewCell: UITableViewCell {
             movieImgView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 12),
             movieImgView.heightAnchor.constraint(equalToConstant: 120),
             movieImgView.widthAnchor.constraint(equalToConstant: 100),
-            movieImgView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -10),
+            movieImgView.bottomAnchor.constraint(lessThanOrEqualTo: containerView.bottomAnchor, constant: -10)
         ])
         
         containerView.addSubview(contentContainer)
@@ -173,7 +173,8 @@ class MovieListTableViewCell: UITableViewCell {
         
         let totalStars = 5
         let remainingStars = totalStars - fullStars - (hasHalfStar ? 1 : 0)
-        for _ in 0..<remainingStars {
+        let safeRemainingStars = max(0, remainingStars)
+        for _ in 0..<safeRemainingStars {
             let starImageView = UIImageView()
             starImageView.contentMode = .scaleAspectFit
             starImageView.tintColor = .lightGray

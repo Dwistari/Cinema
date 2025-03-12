@@ -11,6 +11,17 @@ class ViewController: UIViewController {
     
     var movies: [Movie]?
     
+    private lazy var searchBar: UISearchBar = {
+        let searchBar = UISearchBar()
+        searchBar.tintColor = UIColor.gray
+        searchBar.backgroundImage = UIImage()
+        searchBar.autocorrectionType = .no
+        searchBar.placeholder = "search"
+        searchBar.translatesAutoresizingMaskIntoConstraints = false
+        searchBar.delegate = self
+        return searchBar
+    }()
+    
     lazy var tableView: UITableView = {
         let view = UITableView()
         view.register(MovieListTableViewCell.self.self, forCellReuseIdentifier: "cell")
@@ -30,28 +41,22 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        setupNavbar()
         setupView()
         viewModel.loadMovies()
     }
     
-    
-    private func setupNavbar() {
-        let searchIcon = UIImage(systemName: "magnifyingglass")
-        let tintedSearchIcon = searchIcon?.withTintColor(.gray, renderingMode: .alwaysOriginal)
-        title = "Movies"
-        navigationItem.rightBarButtonItem = UIBarButtonItem(
-            image: tintedSearchIcon,
-            style: .plain,
-            target: self,
-            action: #selector(search))
-
-    }
-    
     private func setupView() {
+        title = "Movie"
+        view.addSubview(searchBar)
+        NSLayoutConstraint.activate([
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+        ])
+        
         view.addSubview(tableView)
         NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.topAnchor.constraint(equalTo: searchBar.bottomAnchor, constant: 16),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -65,12 +70,6 @@ class ViewController: UIViewController {
         }
         
     }
-    
-    
-    @objc private func search() {
-        
-    }
-    
 
 }
 
@@ -93,4 +92,14 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
         navigationController?.pushViewController(vc, animated: true)
     }
     
+}
+
+extension ViewController: UISearchBarDelegate {
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+         if !searchText.isEmpty {
+             viewModel.searchMovies(keyword: searchText)
+         }
+         tableView.reloadData()
+     }
 }
