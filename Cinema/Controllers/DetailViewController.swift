@@ -49,7 +49,7 @@ class DetailViewController: UIViewController {
     lazy var movieImgView: UIImageView = {
         let view = UIImageView()
         view.layer.cornerRadius = 4
-        view.backgroundColor = UIColor.red
+        view.backgroundColor = UIColor.gray
         view.contentMode = .scaleToFill
         view.layer.masksToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -122,6 +122,18 @@ class DetailViewController: UIViewController {
         return view
     }()
     
+    lazy var openIMBtn: UIButton = {
+        let button = UIButton()
+        button.setTitle("OPEN IMDB", for: .normal)
+        button.addTarget(self, action: #selector(openBtn), for: .touchUpInside)
+        button.setTitleColor(UIColor.black, for: .normal)
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor.black.cgColor
+        button.layer.masksToBounds = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
     
     lazy var viewModel: MovieDetailsViewModel = {
         let viewModel = MovieDetailsViewModel()
@@ -171,16 +183,15 @@ class DetailViewController: UIViewController {
         
         containerView.addSubview(movieImgView)
         NSLayoutConstraint.activate([
-            movieImgView.topAnchor.constraint(equalTo: coverImgView.bottomAnchor, constant: -16),
+            movieImgView.topAnchor.constraint(equalTo: rateContainer.bottomAnchor, constant: -16),
             movieImgView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
             movieImgView.heightAnchor.constraint(equalToConstant: 150),
             movieImgView.widthAnchor.constraint(equalToConstant: 100),
-            
         ])
 
         containerView.addSubview(movieName)
         NSLayoutConstraint.activate([
-            movieName.topAnchor.constraint(equalTo: coverImgView.bottomAnchor, constant: 16),
+            movieName.topAnchor.constraint(equalTo: rateContainer.bottomAnchor, constant: 16),
             movieName.leadingAnchor.constraint(equalTo: movieImgView.trailingAnchor, constant: 16),
             movieName.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
         ])
@@ -221,6 +232,13 @@ class DetailViewController: UIViewController {
             synopsisDesc.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
         ])
         
+        containerView.addSubview(openIMBtn)
+        NSLayoutConstraint.activate([
+            openIMBtn.topAnchor.constraint(equalTo: synopsisDesc.bottomAnchor, constant: 12),
+            openIMBtn.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 16),
+            openIMBtn.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -16),
+        ])
+        
     }
     
     private func fetchDetailsMovie() {
@@ -234,9 +252,14 @@ class DetailViewController: UIViewController {
             self.genreLbl.text = genreNames
             self.synopsisDesc.text = data.overview
             self.rateLbl.text = String(format: "%.1f", data.voteAverage)
-            self.coverImgView.loadImage(from: UrlConstants.urlImage + (data.backdropPath ?? ""))
-            self.movieImgView.loadImage(from: UrlConstants.urlImage + (data.posterPath ?? ""))
-
+            self.coverImgView.sd_setImage(with: URL(string: UrlConstants.urlImage + (data.backdropPath ?? "")), placeholderImage: UIImage(named: "placeholder"))
+            self.movieImgView.sd_setImage(with: URL(string: UrlConstants.urlImage + (data.posterPath ?? "")), placeholderImage: UIImage(named: "placeholder"))
+        }
+    }
+    
+    @objc private func openBtn() {
+        if let url = URL(string: "https://www.imdb.com/") {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
         }
     }
         

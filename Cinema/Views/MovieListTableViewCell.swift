@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import SkeletonView
+import SDWebImage
 
 class MovieListTableViewCell: UITableViewCell {
     
@@ -14,6 +16,7 @@ class MovieListTableViewCell: UITableViewCell {
         view.layer.masksToBounds = true
         view.layer.borderWidth = 1
         view.layer.cornerRadius = 8
+        view.isSkeletonable = true
         view.layer.borderColor = UIColor.gray.cgColor
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -26,6 +29,7 @@ class MovieListTableViewCell: UITableViewCell {
         view.layer.cornerRadius = 4
         view.backgroundColor = UIColor.lightGray
         view.layer.masksToBounds = true
+        view.isSkeletonable = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -34,6 +38,7 @@ class MovieListTableViewCell: UITableViewCell {
         let view = UIView()
         view.backgroundColor = .white
         view.layer.cornerRadius = 8
+        view.isSkeletonable = true
         view.layer.masksToBounds = true
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -43,6 +48,7 @@ class MovieListTableViewCell: UITableViewCell {
         let view = UILabel()
         view.numberOfLines = 2
         view.textColor = UIColor.black
+        view.isSkeletonable = true
         view.font = UIFont.boldSystemFont(ofSize: 20)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -53,6 +59,7 @@ class MovieListTableViewCell: UITableViewCell {
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.spacing = 4
+        stackView.isSkeletonable = true
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -61,6 +68,7 @@ class MovieListTableViewCell: UITableViewCell {
         let view = UILabel()
         view.numberOfLines = 2
         view.textColor = UIColor.orange
+        view.isSkeletonable = true
         view.font = UIFont.systemFont(ofSize: 16)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -70,6 +78,7 @@ class MovieListTableViewCell: UITableViewCell {
         let view = UILabel()
         view.numberOfLines = 2
         view.textColor = UIColor.black
+        view.isSkeletonable = true
         view.font = UIFont.systemFont(ofSize: 12)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
@@ -78,11 +87,13 @@ class MovieListTableViewCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupSkeleton()
         setupViews()
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
+        setupSkeleton()
     }
     
     private func setupViews() {
@@ -149,6 +160,14 @@ class MovieListTableViewCell: UITableViewCell {
         contentContainer.layer.shadowPath = UIBezierPath(roundedRect: contentContainer.bounds, cornerRadius: 8).cgPath
     }
     
+
+    private func setupSkeleton() {
+        isSkeletonable = true
+        containerView.isSkeletonable = true
+        movieImgView.isSkeletonable = true
+        movieName.isSkeletonable = true
+    }
+    
     private func setupRatingView(rating: Double) {
         ratingStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
        
@@ -189,6 +208,6 @@ class MovieListTableViewCell: UITableViewCell {
         descLbl.text = movie.overview
         totalRating.text = String(format: "%.1f", data?.voteAverage ?? 0)
         setupRatingView(rating: movie.voteAverage)
-        movieImgView.loadImage(from: UrlConstants.urlImage + (movie.posterPath ?? ""))
+        movieImgView.sd_setImage(with: URL(string: UrlConstants.urlImage + (movie.posterPath ?? "")), placeholderImage: UIImage(named: "placeholder"))
     }
 }
