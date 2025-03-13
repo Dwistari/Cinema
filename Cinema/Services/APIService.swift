@@ -10,6 +10,13 @@ import RxSwift
 import RxMoya
 import Foundation
 
+
+protocol MovieServiceProtocol {
+    func fetchMovies(page: Int) -> Single<[Movie]>
+    func searchMovies(keyword: String, page: Int) -> Single<[Movie]>
+    func getDetailMovie(id: Int) -> Single<MovieDetails>
+}
+
 enum MovieAPI {
     case getPopularMovies(page: Int)
     case searchMovies(query: String, page: Int)
@@ -67,7 +74,7 @@ extension MovieAPI: TargetType {
     }
 }
 
-class APIService {
+class APIService: MovieServiceProtocol {
     static let shared = APIService()
     private let provider = MoyaProvider<MovieAPI>()
     
@@ -75,35 +82,24 @@ class APIService {
         
         return provider.rx.request(.getPopularMovies(page: page))
             .map { response in
-                do {
-                    let decodedResponse = try JSONDecoder().decode(MovieListResponse.self, from: response.data)
-                    return decodedResponse.results
-                }
+                let decodedResponse = try JSONDecoder().decode(MovieListResponse.self, from: response.data)
+                return decodedResponse.results
             }
     }
     
     func searchMovies(keyword: String, page: Int) -> Single<[Movie]> {
         return provider.rx.request(.searchMovies(query: keyword, page: page))
             .map { response in
-                do {
-                    let decodedResponse = try JSONDecoder().decode(MovieListResponse.self, from: response.data)
-                    return decodedResponse.results
-                } catch {
-                    throw error
-                }
+                let decodedResponse = try JSONDecoder().decode(MovieListResponse.self, from: response.data)
+                return decodedResponse.results
             }
     }
     
     func getDetailMovie(id: Int) -> Single<MovieDetails> {
         return provider.rx.request(.getMovieDetail(id: id))
             .map {  response in
-                do {
-                    let decodedResponse = try JSONDecoder().decode(MovieDetails.self, from: response.data)
-                    return decodedResponse
-                } catch {
-                    throw error
-                }
-                
+                let decodedResponse = try JSONDecoder().decode(MovieDetails.self, from: response.data)
+                return decodedResponse
             }
     }
 }

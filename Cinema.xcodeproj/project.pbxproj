@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DD012A242D823690003B6E65 /* RxTest in Frameworks */ = {isa = PBXBuildFile; productRef = DD012A232D823690003B6E65 /* RxTest */; };
+		DD012A262D82369C003B6E65 /* RxBlocking in Frameworks */ = {isa = PBXBuildFile; productRef = DD012A252D82369C003B6E65 /* RxBlocking */; };
+		DD012A2A2D823986003B6E65 /* MovieListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD012A212D82354B003B6E65 /* MovieListViewModelTests.swift */; };
+		DD012A2B2D82398B003B6E65 /* CinemaUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34F30E2D80328F00DDFFF1 /* CinemaUITestsLaunchTests.swift */; };
+		DD012A2C2D82398D003B6E65 /* MockAPIServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD012A272D82370A003B6E65 /* MockAPIServices.swift */; };
+		DD012A2E2D8246DE003B6E65 /* MockCoreDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD012A2D2D8246DE003B6E65 /* MockCoreDataManager.swift */; };
 		DD0C51082D80F5910043D388 /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0C51072D80F5910043D388 /* APIService.swift */; };
 		DD0C510A2D8102470043D388 /* MovieListResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0C51092D8102470043D388 /* MovieListResponse.swift */; };
 		DD0C510C2D8104C90043D388 /* MovieListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD0C510B2D8104C90043D388 /* MovieListViewModel.swift */; };
@@ -16,7 +22,6 @@
 		DD34F2F82D80328E00DDFFF1 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = DD34F2F72D80328E00DDFFF1 /* Base */; };
 		DD34F3032D80328F00DDFFF1 /* CinemaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34F3022D80328F00DDFFF1 /* CinemaTests.swift */; };
 		DD34F30D2D80328F00DDFFF1 /* CinemaUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34F30C2D80328F00DDFFF1 /* CinemaUITests.swift */; };
-		DD34F30F2D80328F00DDFFF1 /* CinemaUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD34F30E2D80328F00DDFFF1 /* CinemaUITestsLaunchTests.swift */; };
 		DD8C5AFA2D81586700B10EA7 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = DD8C5AF92D81586700B10EA7 /* RxSwift */; };
 		DD8C5AFD2D815C7700B10EA7 /* RxMoya in Frameworks */ = {isa = PBXBuildFile; productRef = DD8C5AFC2D815C7700B10EA7 /* RxMoya */; };
 		DD8C5AFF2D815D0100B10EA7 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = DD8C5AFE2D815D0100B10EA7 /* RxCocoa */; };
@@ -54,6 +59,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DD012A212D82354B003B6E65 /* MovieListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieListViewModelTests.swift; sourceTree = "<group>"; };
+		DD012A272D82370A003B6E65 /* MockAPIServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAPIServices.swift; sourceTree = "<group>"; };
+		DD012A2D2D8246DE003B6E65 /* MockCoreDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCoreDataManager.swift; sourceTree = "<group>"; };
 		DD0C51072D80F5910043D388 /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
 		DD0C51092D8102470043D388 /* MovieListResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieListResponse.swift; sourceTree = "<group>"; };
 		DD0C510B2D8104C90043D388 /* MovieListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieListViewModel.swift; sourceTree = "<group>"; };
@@ -99,6 +107,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD012A242D823690003B6E65 /* RxTest in Frameworks */,
+				DD012A262D82369C003B6E65 /* RxBlocking in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +122,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DD012A2F2D8246E2003B6E65 /* MockData */ = {
+			isa = PBXGroup;
+			children = (
+				DD012A272D82370A003B6E65 /* MockAPIServices.swift */,
+				DD012A2D2D8246DE003B6E65 /* MockCoreDataManager.swift */,
+			);
+			path = MockData;
+			sourceTree = "<group>";
+		};
 		DD0C51062D80F5590043D388 /* Services */ = {
 			isa = PBXGroup;
 			children = (
@@ -160,7 +179,9 @@
 		DD34F3012D80328F00DDFFF1 /* CinemaTests */ = {
 			isa = PBXGroup;
 			children = (
+				DD012A2F2D8246E2003B6E65 /* MockData */,
 				DD34F3022D80328F00DDFFF1 /* CinemaTests.swift */,
+				DD012A212D82354B003B6E65 /* MovieListViewModelTests.swift */,
 			);
 			path = CinemaTests;
 			sourceTree = "<group>";
@@ -289,6 +310,10 @@
 				DD34F3002D80328F00DDFFF1 /* PBXTargetDependency */,
 			);
 			name = CinemaTests;
+			packageProductDependencies = (
+				DD012A232D823690003B6E65 /* RxTest */,
+				DD012A252D82369C003B6E65 /* RxBlocking */,
+			);
 			productName = CinemaTests;
 			productReference = DD34F2FE2D80328F00DDFFF1 /* CinemaTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -415,7 +440,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD012A2E2D8246DE003B6E65 /* MockCoreDataManager.swift in Sources */,
 				DD34F3032D80328F00DDFFF1 /* CinemaTests.swift in Sources */,
+				DD012A2C2D82398D003B6E65 /* MockAPIServices.swift in Sources */,
+				DD012A2A2D823986003B6E65 /* MovieListViewModelTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,8 +451,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DD012A2B2D82398B003B6E65 /* CinemaUITestsLaunchTests.swift in Sources */,
 				DD34F30D2D80328F00DDFFF1 /* CinemaUITests.swift in Sources */,
-				DD34F30F2D80328F00DDFFF1 /* CinemaUITestsLaunchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -801,6 +829,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		DD012A232D823690003B6E65 /* RxTest */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DDBF852F2D8153FF009254B5 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxTest;
+		};
+		DD012A252D82369C003B6E65 /* RxBlocking */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DDBF852F2D8153FF009254B5 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxBlocking;
+		};
 		DD8C5AF92D81586700B10EA7 /* RxSwift */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = DDBF852F2D8153FF009254B5 /* XCRemoteSwiftPackageReference "RxSwift" */;

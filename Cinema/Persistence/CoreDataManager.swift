@@ -14,7 +14,7 @@ class CoreDataManager {
     private let persistentContainer: NSPersistentContainer
     private let context: NSManagedObjectContext
 
-    private init() {
+    init() {
         persistentContainer = NSPersistentContainer(name: "MoviesModel")
         persistentContainer.loadPersistentStores { _, error in
             if let error = error {

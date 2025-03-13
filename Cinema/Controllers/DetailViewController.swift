@@ -149,9 +149,11 @@ class DetailViewController: UIViewController {
     }()
     
 
-    
-    private let viewModel = MovieDetailsViewModel()
     private let disposeBag = DisposeBag()
+    lazy var viewModel: MovieDetailsViewModel = {
+        let viewModel = MovieDetailsViewModel(apiService: APIService())
+        return viewModel
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()

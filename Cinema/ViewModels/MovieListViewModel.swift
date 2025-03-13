@@ -12,11 +12,17 @@ import RxCocoa
 class MovieListViewModel: ObservableObject {
     
     private let disposeBag = DisposeBag()
-    private let apiService = APIService.shared
-    
+    private var apiService: MovieServiceProtocol?
+    private var coreDataManager: CoreDataManager
+
     let movies = BehaviorRelay<[Movie]>(value: [])
     let errorMessage = PublishSubject<String>()
     let currentPage = BehaviorRelay<Int>(value: 1)
+    
+    init(apiService: MovieServiceProtocol, coreDataManager: CoreDataManager = CoreDataManager.shared) {
+        self.apiService = apiService
+        self.coreDataManager = coreDataManager
+    }
 
     func loadMovies() {
         CoreDataManager.shared.fetchMovies()
@@ -25,13 +31,8 @@ class MovieListViewModel: ObservableObject {
                 if cachedMovies.isEmpty {
                     self.fetchMoviesFromAPI()
                 } else {
-                    let currentPage = self.currentPage.value
-                    if currentPage > 1 {
-                        let currentMovies = self.movies.value
-                        self.movies.accept(cachedMovies + currentMovies)
-                    } else {
-                        self.movies.accept(cachedMovies)
-                    }
+                    let newMovies = self.currentPage.value > 1 ? self.movies.value + cachedMovies : cachedMovies
+                    self.movies.accept(newMovies)
                 }
             })
             .disposed(by: disposeBag)
@@ -39,7 +40,7 @@ class MovieListViewModel: ObservableObject {
     
     func fetchMoviesFromAPI() {
         let currentPage = self.currentPage.value
-        apiService.fetchMovies(page: currentPage)
+        apiService?.fetchMovies(page: currentPage)
               .observe(on: MainScheduler.instance)
               .subscribe(onSuccess: { [weak self] movies in
                   guard let self = self else { return }
@@ -58,7 +59,7 @@ class MovieListViewModel: ObservableObject {
     }
     
     func searchMovies(keyword: String, page: Int) {
-        apiService.searchMovies(keyword: keyword, page: page)
+        apiService?.searchMovies(keyword: keyword, page: page)
             .subscribe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] movies in
                 self?.movies.accept(movies)

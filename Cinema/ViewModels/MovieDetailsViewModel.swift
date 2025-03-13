@@ -13,9 +13,13 @@ class MovieDetailsViewModel: ObservableObject {
     
     var movies = BehaviorRelay<MovieDetails?>(value: nil)
     private let disposeBag = DisposeBag()
-    private let apiService = APIService.shared
-    
+    private let apiService: MovieServiceProtocol
+
     let errorMessage = PublishSubject<String>()
+    
+    init(apiService: MovieServiceProtocol) {
+        self.apiService = apiService
+    }
     
     func loadDetailsMovie(id: Int) {
         apiService.getDetailMovie(id: id)

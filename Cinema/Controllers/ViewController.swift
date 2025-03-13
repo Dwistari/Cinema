@@ -60,8 +60,12 @@ class ViewController: UIViewController {
         return view
     }()
     
+        
+    lazy var viewModel: MovieListViewModel = {
+        let viewModel = MovieListViewModel(apiService: APIService())
+        return viewModel
+    }()
     
-    private let viewModel = MovieListViewModel()
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
