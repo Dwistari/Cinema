@@ -13,7 +13,6 @@ class WebViewController: UIViewController, WKNavigationDelegate {
 
     var webView: WKWebView!
     var imdbId: String?
-    private let baseURL = "https://www.imdb.com/title/"
     private var activityIndicator: UIActivityIndicatorView!
     private let monitor = NWPathMonitor()
     private let queue = DispatchQueue.global(qos: .background)
@@ -73,7 +72,7 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     }
 
     private func loadMoviePage() {
-        guard let imdbId = imdbId, let url = URL(string: baseURL + imdbId) else {
+        guard let imdbId = imdbId, let url = URL(string: UrlConstants.imdbUrl + imdbId) else {
             showErrorAlert()
             return
         }

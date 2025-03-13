@@ -39,9 +39,8 @@ class MovieListViewModel: ObservableObject {
     }
     
     func fetchMoviesFromAPI() {
-        guard let apiService = apiService else { return }
         let currentPage = self.currentPage.value
-        apiService.fetchMovies(page: currentPage)
+        apiService?.fetchMovies(page: currentPage)
               .observe(on: MainScheduler.instance)
               .subscribe(onSuccess: { [weak self] movies in
                   guard let self = self else { return }
