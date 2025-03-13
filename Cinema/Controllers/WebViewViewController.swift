@@ -24,15 +24,6 @@ class WebViewController: UIViewController, WKNavigationDelegate {
         setupWebView()
         setupActivityIndicator()
         checkInternetAndLoadPage()
-        
-        // Add Refresh Button only if inside NavigationController
-        if navigationController != nil {
-            navigationItem.rightBarButtonItem = UIBarButtonItem(
-                barButtonSystemItem: .refresh,
-                target: self,
-                action: #selector(refreshPage)
-            )
-        }
     }
     
     private func checkInternetAndLoadPage() {
@@ -42,7 +33,7 @@ class WebViewController: UIViewController, WKNavigationDelegate {
                     self.loadMoviePage()
                 } else {
                     self.isInternetIssues = true
-                    self.showErrorAlert()
+                    self.showErrorAlert(message: "No Internet Connection. Please check your network and try again.")
                 }
             }
         }
@@ -73,25 +64,22 @@ class WebViewController: UIViewController, WKNavigationDelegate {
 
     private func loadMoviePage() {
         guard let imdbId = imdbId, let url = URL(string: UrlConstants.imdbUrl + imdbId) else {
-            showErrorAlert()
+            showErrorAlert(message: "Invalid IMDb ID. Unable to load the page.")
             return
         }
-        webView.load(URLRequest(url: url))
-    }
-    
-    @objc func refreshPage() {
-        webView.reload()
+        let request = URLRequest(url: url)
+        webView.load(request)
     }
 
-    private func showErrorAlert() {
+    private func showErrorAlert(message: String? = nil) {
         let alert = UIAlertController(
-            title: isInternetIssues ? "No Internet Connection" :  "Error",
-            message: isInternetIssues ?  "Please check your network and try again." : "Invalid IMDb ID. Unable to load the page.",
+            title: "Error",
+            message: message ?? "Something went wrong.",
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
-              self.navigationController?.popViewController(animated: true)
-          }))
+            self.navigationController?.popViewController(animated: true)
+        }))
         present(alert, animated: true)
     }
 
@@ -108,6 +96,17 @@ class WebViewController: UIViewController, WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
         activityIndicator.stopAnimating()
-        showErrorAlert()
+        if let urlError = error as? URLError {
+            switch urlError.code {
+            case .notConnectedToInternet:
+                showErrorAlert(message: "No Internet Connection. Please check your network and try again.")
+            case .timedOut:
+                showErrorAlert(message: "The request timed out. Please try again later.")
+            default:
+                showErrorAlert(message: "Failed to load the page. Please try again.")
+            }
+        } else {
+            showErrorAlert(message: "An unexpected error occurred.")
+        }
     }
 }
