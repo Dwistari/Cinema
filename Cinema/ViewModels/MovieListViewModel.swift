@@ -16,7 +16,7 @@ class MovieListViewModel: ObservableObject {
     private var coreDataManager: CoreDataManager
 
     let movies = BehaviorRelay<[Movie]>(value: [])
-    let errorMessage = PublishSubject<String>()
+    let errorMessage = ReplaySubject<String>.create(bufferSize: 1)
     let currentPage = BehaviorRelay<Int>(value: 1)
     
     init(apiService: MovieServiceProtocol, coreDataManager: CoreDataManager = CoreDataManager.shared) {
@@ -25,7 +25,7 @@ class MovieListViewModel: ObservableObject {
     }
 
     func loadMovies() {
-        CoreDataManager.shared.fetchMovies()
+        coreDataManager.fetchMovies()
             .subscribe(onNext: { [weak self] cachedMovies in
                 guard let self = self else { return }
                 if cachedMovies.isEmpty {

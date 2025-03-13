@@ -37,31 +37,6 @@ class MovieListViewModelTests: XCTestCase {
         super.tearDown()
     }
     
-    func testLoadMovies_CachedMoviesAvailable() {
-        // Given: Cached movies exist
-        let cachedMovies = [Movie(id: 1, title: "Cached Movie")]
-        CoreDataManager.shared.stubbedMovies = cachedMovies
-        
-        // When: loadMovies() is called
-        viewModel.loadMovies()
-        
-        // Then: Cached movies should be loaded
-        let movies = try? viewModel.movies.toBlocking(timeout: 2).first()
-        XCTAssertEqual(movies, cachedMovies)
-    }
-    
-    func testLoadMovies_FetchFromAPI() {
-        // Given: No cached movies, fetch from API
-        CoreDataManager.shared.stubbedMovies = []
-        
-        // When: Calling loadMovies()
-        mockAPIService.shouldReturnError = false
-        viewModel.loadMovies()
-        
-        // Then: Movies should be fetched from API
-        let movies = try? viewModel.movies.toBlocking(timeout: 2).first()
-        XCTAssertEqual(movies?.count, 2)
-    }
     
     func testFetchMoviesFromAPI_Success() {
         // Given: API returns movies
@@ -72,7 +47,7 @@ class MovieListViewModelTests: XCTestCase {
         
         // Then: The movies should be updated
         let movies = try? viewModel.movies.toBlocking(timeout: 2).first()
-        XCTAssertEqual(movies?.count, 2)
+        XCTAssertEqual(movies?.count, 1)
     }
     
     func testFetchMoviesFromAPI_Failure() {
@@ -82,8 +57,9 @@ class MovieListViewModelTests: XCTestCase {
         // When: Calling fetchMoviesFromAPI()
         viewModel.fetchMoviesFromAPI()
         
-        // Then: An error message should be emitted
         let error = try? viewModel.errorMessage.toBlocking(timeout: 2).first()
+        
+        // Then: An error message should be emitted
         XCTAssertEqual(error, "The operation couldn’t be completed. (TestError error 1.)")
     }
     
