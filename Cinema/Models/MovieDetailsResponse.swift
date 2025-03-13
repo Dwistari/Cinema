@@ -12,7 +12,7 @@ struct MovieDetails: Decodable {
     let backdropPath: String?
     let genres: [Genre]
     let id: Int
-    let imdbID: String
+    let imdbID: String?
     let originalTitle: String
     let overview: String
     let popularity: Double

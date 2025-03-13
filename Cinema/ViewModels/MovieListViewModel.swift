@@ -39,8 +39,9 @@ class MovieListViewModel: ObservableObject {
     }
     
     func fetchMoviesFromAPI() {
+        guard let apiService = apiService else { return }
         let currentPage = self.currentPage.value
-        apiService?.fetchMovies(page: currentPage)
+        apiService.fetchMovies(page: currentPage)
               .observe(on: MainScheduler.instance)
               .subscribe(onSuccess: { [weak self] movies in
                   guard let self = self else { return }
@@ -53,14 +54,15 @@ class MovieListViewModel: ObservableObject {
                       self.saveMoviesToCoreData(movies, currentPage: currentPage)
                   }
               }, onFailure: { [weak self] error in
-                  self?.errorMessage.onNext(error.localizedDescription)
+                  guard let self = self else { return }
+                  self.errorMessage.onNext(error.localizedDescription)
               })
               .disposed(by: disposeBag)
     }
     
     func searchMovies(keyword: String, page: Int) {
         apiService?.searchMovies(keyword: keyword, page: page)
-            .subscribe(on: MainScheduler.instance)
+            .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] movies in
                 self?.movies.accept(movies)
             }, onFailure: { [weak self] error in
@@ -69,9 +71,19 @@ class MovieListViewModel: ObservableObject {
             .disposed(by: disposeBag)
     }
     
+    func clearMoviesInCoreData() {
+        coreDataManager.clearMovies()
+            .subscribe(
+                onCompleted: { print("Movies cleared from Core Data") },
+                onError: { error in print("Failed to clear movies: \(error)") }
+            )
+            .disposed(by: disposeBag)
+    }
+    
     func refreshMovies() {
          movies.accept([])
          currentPage.accept(1)
+         clearMoviesInCoreData()
          fetchMoviesFromAPI()
      }
     

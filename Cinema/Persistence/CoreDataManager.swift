@@ -71,4 +71,24 @@ class CoreDataManager {
             return Disposables.create()
         }
     }
+    
+    // MARK: - Clear Data
+    func clearMovies() -> Completable {
+        return Completable.create { completable in
+            let context = self.persistentContainer.viewContext
+            let fetchRequest: NSFetchRequest<NSFetchRequestResult> = MovieEntity.fetchRequest()
+            let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+            
+            do {
+                try context.execute(deleteRequest)
+                try context.save()
+                completable(.completed)
+            } catch {
+                completable(.error(error))
+            }
+            
+            return Disposables.create()
+        }
+    }
+    
 }

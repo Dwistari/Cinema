@@ -28,6 +28,7 @@ class MovieListTableViewCell: UITableViewCell {
         view.contentMode = .scaleToFill
         view.layer.cornerRadius = 4
         view.backgroundColor = UIColor.lightGray
+        view.tintColor = .gray
         view.layer.masksToBounds = true
         view.isSkeletonable = true
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -208,6 +209,6 @@ class MovieListTableViewCell: UITableViewCell {
         descLbl.text = movie.overview
         totalRating.text = String(format: "%.1f", data?.voteAverage ?? 0)
         setupRatingView(rating: movie.voteAverage)
-        movieImgView.sd_setImage(with: URL(string: UrlConstants.urlImage + (movie.posterPath ?? "")), placeholderImage: UIImage(named: "placeholder"))
+        movieImgView.sd_setImage(with: URL(string: UrlConstants.urlImage + (movie.posterPath ?? "")), placeholderImage: UIImage(systemName: "photo"))
     }
 }

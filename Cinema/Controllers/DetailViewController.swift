@@ -13,6 +13,7 @@ import Toast
 class DetailViewController: UIViewController {
     
     var movie: Movie?
+    var imdbId: String?
 
     lazy var containerView: UIView = {
         let view = UIView()
@@ -279,7 +280,7 @@ class DetailViewController: UIViewController {
     private func fetchDetailsMovie(detail: MovieDetails?) {
         DispatchQueue.main.async {
             guard let data = detail else {return}
-                    
+            self.imdbId = data.imdbID
             let genreNames = data.genres.map { $0.name }.joined(separator: ", ")
             self.movieName.text = data.originalTitle
             self.taglineLbl.text = data.tagline
@@ -287,8 +288,8 @@ class DetailViewController: UIViewController {
             self.genreLbl.text = genreNames
             self.synopsisDesc.text = data.overview
             self.rateLbl.text = String(format: "%.1f", data.voteAverage)
-            self.coverImgView.sd_setImage(with: URL(string: UrlConstants.urlImage + (data.backdropPath ?? "")), placeholderImage: UIImage(named: "placeholder"))
-            self.movieImgView.sd_setImage(with: URL(string: UrlConstants.urlImage + (data.posterPath ?? "")), placeholderImage: UIImage(named: "placeholder"))
+            self.coverImgView.sd_setImage(with: URL(string: UrlConstants.urlImage + (data.backdropPath ?? "")), placeholderImage: UIImage(named: "photo"))
+            self.movieImgView.sd_setImage(with: URL(string: UrlConstants.urlImage + (data.posterPath ?? "")), placeholderImage: UIImage(named: "photo"))
         }
     }
     
@@ -333,9 +334,9 @@ class DetailViewController: UIViewController {
     }
     
     @objc private func openBtn() {
-        if let url = URL(string: "https://www.imdb.com/") {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        }
+        let vc = WebViewController()
+        vc.imdbId = imdbId
+        navigationController?.pushViewController(vc, animated: true)
     }
         
 }
