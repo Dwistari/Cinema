@@ -14,7 +14,7 @@ class MovieListViewModel: ObservableObject {
     private let disposeBag = DisposeBag()
     private var apiService: MovieServiceProtocol?
     private var coreDataManager: CoreDataManager
-
+    
     let movies = BehaviorRelay<[Movie]>(value: [])
     let errorMessage = ReplaySubject<String>.create(bufferSize: 1)
     let currentPage = BehaviorRelay<Int>(value: 1)
@@ -64,9 +64,11 @@ class MovieListViewModel: ObservableObject {
         apiService?.searchMovies(keyword: keyword, page: page)
             .observe(on: MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] movies in
-                self?.movies.accept(movies)
+                guard let self = self else { return }
+                self.movies.accept(movies)
             }, onFailure: { [weak self] error in
-                self?.errorMessage.onNext(error.localizedDescription)
+                guard let self = self else { return }
+                self.errorMessage.onNext(error.localizedDescription)
             })
             .disposed(by: disposeBag)
     }

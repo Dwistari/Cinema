@@ -15,7 +15,8 @@ class ViewController: UIViewController {
     
     var movies: [Movie]?
     var currentPage = 1
-    
+    private var isLoadingMore = false
+
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
         searchBar.tintColor = UIColor.gray
@@ -138,6 +139,7 @@ class ViewController: UIViewController {
             .filter { $0 }
             .subscribe(onNext: { [weak self] _ in
                 guard let self = self else { return }
+                self.isLoadingMore = true
                 self.viewModel.loadMoreMovies()
             })
             .disposed(by: disposeBag)
@@ -163,11 +165,15 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row < viewModel.movies.value.count {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as! MovieListTableViewCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as? MovieListTableViewCell else {
+                return UITableViewCell()
+            }
             cell.bindData(data: movies?[indexPath.row])
             return cell
         } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "LoadingCell", for: indexPath) as! LoadingCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: "LoadingCell", for: indexPath) as? LoadingCell else {
+                return UITableViewCell()
+            }
             cell.startAnimating()
             return cell
         }

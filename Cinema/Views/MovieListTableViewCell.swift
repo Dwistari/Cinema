@@ -58,7 +58,7 @@ class MovieListTableViewCell: UITableViewCell {
     lazy var ratingStackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
-        stackView.distribution = .fillEqually
+        stackView.distribution = .fillProportionally
         stackView.spacing = 4
         stackView.isSkeletonable = true
         stackView.translatesAutoresizingMaskIntoConstraints = false

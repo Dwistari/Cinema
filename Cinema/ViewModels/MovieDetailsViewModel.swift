@@ -28,7 +28,8 @@ class MovieDetailsViewModel: ObservableObject {
                 guard let self = self else { return }
                 self.movies.accept(movies)
             }, onFailure: { [weak self] error in
-                self?.errorMessage.onNext(error.localizedDescription)
+                guard let self = self else { return }
+                self.errorMessage.onNext(error.localizedDescription)
             })
             .disposed(by: disposeBag)
     }

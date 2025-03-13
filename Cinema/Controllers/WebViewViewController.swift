@@ -7,6 +7,7 @@
 
 import UIKit
 import WebKit
+import Network
 
 class WebViewController: UIViewController, WKNavigationDelegate {
 
@@ -14,13 +15,16 @@ class WebViewController: UIViewController, WKNavigationDelegate {
     var imdbId: String?
     private let baseURL = "https://www.imdb.com/title/"
     private var activityIndicator: UIActivityIndicatorView!
+    private let monitor = NWPathMonitor()
+    private let queue = DispatchQueue.global(qos: .background)
+    private var isInternetIssues = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setupWebView()
         setupActivityIndicator()
-        loadMoviePage()
+        checkInternetAndLoadPage()
         
         // Add Refresh Button only if inside NavigationController
         if navigationController != nil {
@@ -30,6 +34,20 @@ class WebViewController: UIViewController, WKNavigationDelegate {
                 action: #selector(refreshPage)
             )
         }
+    }
+    
+    private func checkInternetAndLoadPage() {
+        monitor.pathUpdateHandler = { path in
+            DispatchQueue.main.async {
+                if path.status == .satisfied {
+                    self.loadMoviePage()
+                } else {
+                    self.isInternetIssues = true
+                    self.showErrorAlert()
+                }
+            }
+        }
+        monitor.start(queue: queue)
     }
 
     private func setupWebView() {
@@ -68,13 +86,16 @@ class WebViewController: UIViewController, WKNavigationDelegate {
 
     private func showErrorAlert() {
         let alert = UIAlertController(
-            title: "Error",
-            message: "Invalid IMDb ID. Unable to load the page.",
+            title: isInternetIssues ? "No Internet Connection" :  "Error",
+            message: isInternetIssues ?  "Please check your network and try again." : "Invalid IMDb ID. Unable to load the page.",
             preferredStyle: .alert
         )
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in
+              self.navigationController?.popViewController(animated: true)
+          }))
         present(alert, animated: true)
     }
+
 
    // MARK: - WKNavigationDelegate Methods
     

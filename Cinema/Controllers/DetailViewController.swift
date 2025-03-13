@@ -273,12 +273,15 @@ class DetailViewController: UIViewController {
             })
             .disposed(by: disposeBag)
 
-        viewModel.loadDetailsMovie(id: movie?.id ?? 0)
+        guard let movieId = movie?.id else {
+            self.view.makeToast("MovieID Missing", duration: 3.0, position: .bottom)
+            return
+        }
+        viewModel.loadDetailsMovie(id: movieId)
 
     }
     
     private func fetchDetailsMovie(detail: MovieDetails?) {
-        DispatchQueue.main.async {
             guard let data = detail else {return}
             self.imdbId = data.imdbID
             let genreNames = data.genres.map { $0.name }.joined(separator: ", ")
@@ -290,7 +293,6 @@ class DetailViewController: UIViewController {
             self.rateLbl.text = String(format: "%.1f", data.voteAverage)
             self.coverImgView.sd_setImage(with: URL(string: UrlConstants.urlImage + (data.backdropPath ?? "")), placeholderImage: UIImage(named: "photo"))
             self.movieImgView.sd_setImage(with: URL(string: UrlConstants.urlImage + (data.posterPath ?? "")), placeholderImage: UIImage(named: "photo"))
-        }
     }
     
     private func showLoading() {
@@ -308,29 +310,27 @@ class DetailViewController: UIViewController {
     }
     
     private func hideLoading() {
-        DispatchQueue.main.async {
-            self.coverImgView.hideSkeleton()
-            self.movieImgView.hideSkeleton()
-            self.movieName.hideSkeleton()
-            self.synopsisDesc.hideSkeleton()
-            self.taglineLbl.hideSkeleton()
-            self.openIMBtn.hideSkeleton()
-            self.rateContainer.hideSkeleton()
-            self.realeselbl.hideSkeleton()
-            self.genreLbl.hideSkeleton()
-                        
-            self.coverImgView.isSkeletonable = false
-            self.movieImgView.isSkeletonable = false
-            self.movieName.isSkeletonable = false
-            self.synopsisDesc.isSkeletonable = false
-            self.taglineLbl.isSkeletonable = false
-            self.openIMBtn.isSkeletonable = false
-            self.rateContainer.isSkeletonable = false
-            self.realeselbl.isSkeletonable = false
-            self.genreLbl.isSkeletonable = false
-            
-            self.view.layoutIfNeeded()
-        }
+        self.coverImgView.hideSkeleton()
+        self.movieImgView.hideSkeleton()
+        self.movieName.hideSkeleton()
+        self.synopsisDesc.hideSkeleton()
+        self.taglineLbl.hideSkeleton()
+        self.openIMBtn.hideSkeleton()
+        self.rateContainer.hideSkeleton()
+        self.realeselbl.hideSkeleton()
+        self.genreLbl.hideSkeleton()
+                    
+        self.coverImgView.isSkeletonable = false
+        self.movieImgView.isSkeletonable = false
+        self.movieName.isSkeletonable = false
+        self.synopsisDesc.isSkeletonable = false
+        self.taglineLbl.isSkeletonable = false
+        self.openIMBtn.isSkeletonable = false
+        self.rateContainer.isSkeletonable = false
+        self.realeselbl.isSkeletonable = false
+        self.genreLbl.isSkeletonable = false
+        
+        self.view.layoutIfNeeded()
     }
     
     @objc private func openBtn() {
