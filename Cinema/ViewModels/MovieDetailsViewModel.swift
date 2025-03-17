@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 import RxCocoa
 
-class MovieDetailsViewModel: ObservableObject {
+class MovieDetailsViewModel {
     
     var movies = BehaviorRelay<MovieDetails?>(value: nil)
     private let disposeBag = DisposeBag()

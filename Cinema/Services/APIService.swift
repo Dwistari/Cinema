@@ -17,15 +17,20 @@ protocol MovieServiceProtocol {
     func getDetailMovie(id: Int) -> Single<MovieDetails>
 }
 
+// Represents endpoints
 enum MovieAPI {
     case getPopularMovies(page: Int)
     case searchMovies(query: String, page: Int)
     case getMovieDetail(id: Int)
 }
 
+// Implementasi TargetType (Moya Protocol)
 extension MovieAPI: TargetType {
     var baseURL: URL {
-        return URL(string: UrlConstants.baseURL)!
+        guard let url = URL(string: UrlConstants.baseURL) else {
+               fatalError("Invalid Base URL")
+           }
+           return url
     }
     
     var path: String {
@@ -76,10 +81,13 @@ extension MovieAPI: TargetType {
 
 class APIService: MovieServiceProtocol {
     static let shared = APIService()
-    private let provider = MoyaProvider<MovieAPI>()
+    private var provider = MoyaProvider<MovieAPI>()
+   
+    init(provider: MoyaProvider<MovieAPI> = MoyaProvider<MovieAPI>()) {
+           self.provider = provider
+       }
     
     func fetchMovies(page: Int)  -> Single<[Movie]> {
-        
         return provider.rx.request(.getPopularMovies(page: page))
             .map { response in
                 let decodedResponse = try JSONDecoder().decode(MovieListResponse.self, from: response.data)

@@ -22,7 +22,7 @@ struct MovieListResponse: Codable {
     }
 }
 
-public struct Movie: Codable, Equatable {
+public struct Movie: Codable {
     let id: Int
     let originalTitle: String
     let overview: String

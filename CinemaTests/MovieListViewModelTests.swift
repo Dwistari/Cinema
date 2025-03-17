@@ -19,7 +19,8 @@ class MovieListViewModelTests: XCTestCase {
     var mockCoreDataManager: MockCoreDataManager!
     var scheduler: TestScheduler!
     var disposeBag: DisposeBag!
-    
+  
+    // Initialisation objek / dependensi
     override func setUp() {
         super.setUp()
         mockAPIService = MockAPIService()
@@ -29,6 +30,7 @@ class MovieListViewModelTests: XCTestCase {
         mockCoreDataManager = MockCoreDataManager()
     }
     
+    // Clean objek after each test case done
     override func tearDown() {
         viewModel = nil
         mockAPIService = nil

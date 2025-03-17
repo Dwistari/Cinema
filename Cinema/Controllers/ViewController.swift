@@ -15,7 +15,6 @@ class ViewController: UIViewController {
     
     var movies: [Movie]?
     var currentPage = 1
-    private var isLoadingMore = false
 
     private lazy var searchBar: UISearchBar = {
         let searchBar = UISearchBar()
@@ -37,7 +36,6 @@ class ViewController: UIViewController {
         view.dataSource = self
         view.separatorStyle = .none
         view.isSkeletonable = true
-        view.showSkeleton()
         view.refreshControl = refreshControl
         view.backgroundColor = UIColor.white
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -66,6 +64,11 @@ class ViewController: UIViewController {
         let viewModel = MovieListViewModel(apiService: APIService())
         return viewModel
     }()
+    
+    // Clean obeject when object clean from memory
+    deinit {
+        print("MovieListViewController deallocated")
+    }
     
     private let disposeBag = DisposeBag()
     
@@ -110,40 +113,33 @@ class ViewController: UIViewController {
     private func loadMoviesList() {
         showLoading()
         viewModel.movies
-            .subscribe(onNext: { movies in
+            .observe(on: MainScheduler.instance) // Memastikan eksekusi di main thread
+            .subscribe(onNext: { [weak self] movies in
+                guard let self = self else { return }
                 self.movies = movies
-                self.hideLoading()
-                self.tableView.reloadData()
-                self.refreshControl.endRefreshing()
-                self.dataNotFoundLbl.isHidden = !movies.isEmpty
+                self.fetchDataList()
             })
             .disposed(by: disposeBag)
         
         viewModel.errorMessage
-            .subscribe(onNext: { error in
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [weak self] error in
+                guard let self = self else { return }
                 self.view.makeToast(error, duration: 3.0, position: .bottom)
             })
             .disposed(by: disposeBag)
-        
-        tableView.rx.contentOffset
-            .map { [weak self] contentOffset in
-                guard let self = self else { return false }
-                
-                let offsetY = contentOffset.y
-                let contentHeight = self.tableView.contentSize.height
-                let tableViewHeight = self.tableView.frame.size.height
-                
-                return offsetY > contentHeight - tableViewHeight - 100
-            }
-            .distinctUntilChanged()
-            .filter { $0 }
-            .subscribe(onNext: { [weak self] _ in
-                guard let self = self else { return }
-                self.isLoadingMore = true
-                self.viewModel.loadMoreMovies()
-            })
-            .disposed(by: disposeBag)
         self.viewModel.loadMovies()
+    }
+    
+    private func fetchDataList() {
+        if let data = movies {
+            self.dataNotFoundLbl.isHidden = !data.isEmpty
+            self.tableView.reloadData()
+            self.refreshControl.endRefreshing()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.hideLoading()
+            }
+        }
     }
     
     
@@ -160,23 +156,31 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return movies?.count ?? 0
+        return viewModel.movies.value.count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row < viewModel.movies.value.count {
+        let moviesCount = viewModel.movies.value.count
+
+        if indexPath.row == moviesCount - 1 {
+            self.viewModel.loadMoreMovies()
+        }
+        
+        // Menampilkan sel movie
+        if indexPath.row < moviesCount {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: "MovieCell", for: indexPath) as? MovieListTableViewCell else {
                 return UITableViewCell()
             }
             cell.bindData(data: movies?[indexPath.row])
             return cell
-        } else {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "LoadingCell", for: indexPath) as? LoadingCell else {
-                return UITableViewCell()
-            }
-            cell.startAnimating()
-            return cell
         }
+        
+        // Menampilkan loading indicator
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "LoadingCell", for: indexPath) as? LoadingCell else {
+            return UITableViewCell()
+        }
+        cell.startAnimating()
+        return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -190,26 +194,31 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
     private func showLoading() {
         DispatchQueue.main.async {
             self.tableView.showAnimatedSkeleton()
+            self.tableView.showSkeleton()
+
         }
     }
     
     private func hideLoading() {
-        DispatchQueue.main.async {
-            self.tableView.stopSkeletonAnimation()
-            self.tableView.hideSkeleton(reloadDataAfter: true)
-        }
-    }    
+        self.tableView.stopSkeletonAnimation()
+        self.tableView.hideSkeleton(reloadDataAfter: true)
+    }
 }
 
 extension ViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if !searchText.isEmpty {
-            viewModel.searchMovies(keyword: searchText, page: 1)
-        }
-        tableView.reloadData()
+   
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        let keyword = searchBar.text ?? ""
+        if !keyword.isEmpty {
+            viewModel.searchMovies(keyword: keyword, page: 1)
+        } else {
+            viewModel.loadMovies() // Load move from Core Data /API
+        }
+        tableView.reloadData()
+        
         searchBar.resignFirstResponder()
     }
     

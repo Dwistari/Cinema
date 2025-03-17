@@ -257,26 +257,28 @@ class DetailViewController: UIViewController {
     }
     
     private func loadDetail() {
+        guard let movieId = movie?.id else {
+            self.view.makeToast("MovieID Missing", duration: 3.0, position: .bottom)
+            return
+        }
         showLoading()
         viewModel.movies
             .compactMap { $0 }
                 .observe(on: MainScheduler.instance)
-            .subscribe(onNext: { movies in
+            .subscribe(onNext: { [weak self] movies in
+                guard let self = self else { return }
                 self.hideLoading()
                 self.fetchDetailsMovie(detail: movies)
             })
             .disposed(by: disposeBag)
         
         viewModel.errorMessage
-            .subscribe(onNext: { error in
+            .subscribe(onNext: { [weak self] error in
+                guard let self = self else { return }
                 self.view.makeToast(error, duration: 3.0, position: .bottom)
             })
             .disposed(by: disposeBag)
 
-        guard let movieId = movie?.id else {
-            self.view.makeToast("MovieID Missing", duration: 3.0, position: .bottom)
-            return
-        }
         viewModel.loadDetailsMovie(id: movieId)
 
     }

@@ -25,7 +25,7 @@ class CoreDataManager {
     }
     
     // MARK: - Save Movie List
-    func saveMovies(_ movies: [Movie], currentPage: Int) -> Completable {
+    func saveMovies(_ movies: [Movie]) -> Completable {
         return Completable.create { completable in
             self.context.perform {
                 let fetchRequest: NSFetchRequest<NSFetchRequestResult> = MovieEntity.fetchRequest()
@@ -39,6 +39,7 @@ class CoreDataManager {
                         entity.overview = movie.overview
                         entity.rating = movie.voteAverage
                         entity.posterPath = movie.posterPath
+                        entity.createdAt = Date()
                     }
                     
                     try self.context.save()
@@ -56,7 +57,8 @@ class CoreDataManager {
         return Observable.create { observer in
             self.context.perform {
                 let fetchRequest: NSFetchRequest<MovieEntity> = MovieEntity.fetchRequest()
-                
+                fetchRequest.sortDescriptors = [NSSortDescriptor(key: "createdAt", ascending: true)] // Mengurutkan list dari data
+
                 do {
                     let movieEntities = try self.context.fetch(fetchRequest)
                     let movies = movieEntities.map { entity in

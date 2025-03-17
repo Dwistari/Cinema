@@ -42,6 +42,7 @@ class WebViewController: UIViewController, WKNavigationDelegate {
 
     private func setupWebView() {
         let webConfiguration = WKWebViewConfiguration()
+        webConfiguration.websiteDataStore = WKWebsiteDataStore.nonPersistent() // Use non-persistent session
         webView = WKWebView(frame: .zero, configuration: webConfiguration)
         webView.navigationDelegate = self
         webView.translatesAutoresizingMaskIntoConstraints = false
